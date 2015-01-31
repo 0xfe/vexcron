@@ -75,11 +75,11 @@ func TestParseConfig(t *testing.T) {
 				[]Entry{
 					Entry{
 						[]Schedule{
-							{fields: allMinutes},
-							{fields: allHours},
-							{fields: allDoMs},
-							{fields: allMonths},
-							{fields: allDoWs},
+							{slots: allMinutes},
+							{slots: allHours},
+							{slots: allDoMs},
+							{slots: allMonths},
+							{slots: allDoWs},
 						},
 						"/bin/foo",
 					},
@@ -98,21 +98,21 @@ func TestParseConfig(t *testing.T) {
 				[]Entry{
 					Entry{
 						[]Schedule{
-							{fields: allMinutes},
-							{fields: allHours},
-							{fields: allDoMs},
-							{fields: allMonths},
-							{fields: allDoWs},
+							{slots: allMinutes},
+							{slots: allHours},
+							{slots: allDoMs},
+							{slots: allMonths},
+							{slots: allDoWs},
 						},
 						"/bin/foo",
 					},
 					Entry{
 						[]Schedule{
-							{fields: *NewBitSet(5)},
-							{fields: allHours},
-							{fields: allDoMs},
-							{fields: allMonths},
-							{fields: allDoWs},
+							{slots: *NewBitSet(5)},
+							{slots: allHours},
+							{slots: allDoMs},
+							{slots: allMonths},
+							{slots: allDoWs},
 						},
 						"/bin/bar boo",
 					},

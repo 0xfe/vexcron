@@ -35,15 +35,16 @@ import (
 )
 
 var (
-	envRE, entryRE, rangeRE, valueRE, eolRE *regexp.Regexp
+	envRE, entryRE, rangeRE, valueRE, eolRE, hashRE *regexp.Regexp
 )
 
 type Env map[string]string
 
 type Schedule struct {
-	fields  BitSet
+	slots   BitSet
 	last    bool
 	weekday bool
+	hash    bool
 }
 
 type Entry struct {
@@ -75,9 +76,10 @@ func init() {
 
 	envRE = compile("^(\\S+)\\s*=\\s*(\\S+)")
 	entryRE = compile("^(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(.+)")
-	rangeRE = compile("^(\\d+)\\s*-\\s*(\\d+)")
-	valueRE = compile("^(\\d+)([LW#]?)")
+	rangeRE = compile("^(\\d+)\\s*-\\s*(\\d+)$")
+	valueRE = compile("^(\\d+)([LW#]?)$")
 	eolRE = compile("\\r?\\n")
+	hashRE = compile("^#(\\d)$")
 }
 
 type LineType int
@@ -139,12 +141,14 @@ type scheduleOptions struct {
 
 func extractSchedule(match string, low uint, high uint, opts scheduleOptions) (Schedule, error) {
 	// Wildcard schedule
-	if match == "*" {
-		return Schedule{fields: *genBitSet(low, high)}, nil
+	if match == "*" || match == "?" {
+		return Schedule{slots: *genBitSet(low, high)}, nil
 	}
 
 	pieces := strings.Split(match, ",")
 	bitset := NewBitSet()
+	hasL := false
+	hasW := false
 
 	// For each comma-separated value
 	for _, piece := range pieces {
@@ -165,17 +169,37 @@ func extractSchedule(match string, low uint, high uint, opts scheduleOptions) (S
 		}
 
 		// Check for single value
-		number, err := strconv.ParseUint(piece, 10, 8)
-		if err != nil {
+		matches := valueRE.FindStringSubmatch(piece)
+		if matches == nil {
 			return Schedule{}, fmt.Errorf("can't parse %v", match)
 		}
+
+		number, _ := strconv.ParseUint(matches[1], 10, 8)
 		if uint(number) < low || uint(number) > high {
 			return Schedule{}, fmt.Errorf("%v out of range (%v - %v)", number, low, high)
 		}
 		bitset.Set(uint(number), true)
+
+		if len(matches) == 3 {
+			switch {
+			case matches[2] == "L":
+				if opts.allowL {
+					hasL = true
+				} else {
+					return Schedule{}, fmt.Errorf("bad schedule: %v", piece)
+				}
+
+			case matches[2] == "W":
+				if opts.allowW {
+					hasW = true
+				} else {
+					return Schedule{}, fmt.Errorf("bad schedule: %v", piece)
+				}
+			}
+		}
 	}
 
-	return Schedule{fields: *bitset}, nil
+	return Schedule{slots: *bitset, last: hasL, weekday: hasW}, nil
 }
 
 func extractMinute(match string) (Schedule, error) {

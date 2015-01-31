@@ -78,12 +78,12 @@ func TestSchedule(t *testing.T) {
 		{
 			"All the things",
 			"*", 0, 5, scheduleOptions{},
-			false, Schedule{fields: *RangeBitSet(0, 5)},
+			false, Schedule{slots: *RangeBitSet(0, 5)},
 		},
 		{
 			"Just one",
 			"1", 0, 5, scheduleOptions{},
-			false, Schedule{fields: *NewBitSet(1)},
+			false, Schedule{slots: *NewBitSet(1)},
 		},
 		{
 			"Out of range",
@@ -93,17 +93,32 @@ func TestSchedule(t *testing.T) {
 		{
 			"Multiple",
 			"1,4,3", 0, 5, scheduleOptions{},
-			false, Schedule{fields: *NewBitSet(1, 4, 3)},
+			false, Schedule{slots: *NewBitSet(1, 4, 3)},
 		},
 		{
 			"Single range",
 			"3-10", 0, 20, scheduleOptions{},
-			false, Schedule{fields: *RangeBitSet(3, 10)},
+			false, Schedule{slots: *RangeBitSet(3, 10)},
 		},
 		{
 			"Multiple ranges",
 			"3-5,15-16,19", 0, 20, scheduleOptions{},
-			false, Schedule{fields: *NewBitSet(3, 4, 5, 15, 16, 19)},
+			false, Schedule{slots: *NewBitSet(3, 4, 5, 15, 16, 19)},
+		},
+		{
+			"Last",
+			"3L", 0, 20, scheduleOptions{allowL: true},
+			false, Schedule{slots: *NewBitSet(3), last: true},
+		},
+		{
+			"No Last",
+			"3L", 0, 20, scheduleOptions{allowL: false},
+			true, Schedule{},
+		},
+		{
+			"Weekday",
+			"5W", 0, 20, scheduleOptions{allowW: true},
+			false, Schedule{slots: *NewBitSet(5), weekday: true},
 		},
 	}
 
