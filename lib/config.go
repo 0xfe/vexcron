@@ -1,3 +1,12 @@
+/*
+VexCron - Drop-in replacement for the Cron daemon.
+Copyright 2015 Mohit Cheppudira <mohit@muthanna.com>
+
+This file is currently just a shim around parser.go that loads
+configuration files. The intent of Config is to watch multiple
+configuration files in /etc/ and /var/spool.
+*/
+
 package lib
 
 import (

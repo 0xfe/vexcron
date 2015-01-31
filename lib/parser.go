@@ -1,3 +1,29 @@
+/*
+VexCron - Drop-in replacement for the Cron daemon.
+Copyright 2015 Mohit Cheppudira <mohit@muthanna.com>
+
+This file implements parsing of crontab files. We currently support
+the following syntax:
+
+Field name   | Mandatory? | Allowed values  | Allowed special characters
+----------   | ---------- | --------------  | --------------------------
+Seconds      | Yes        | 0-59            | * / , -
+Minutes      | Yes        | 0-59            | * / , -
+Hours        | Yes        | 0-23            | * / , -
+Day of month | Yes        | 1-31            | * / , - ? L W
+Month        | Yes        | 1-12 or JAN-DEC | * / , -
+Day of week  | Yes        | 0-6 or SUN-SAT  | * / , - ? L #
+
+We also support all vixie-cron macros:
+
+@yearly (or @annually)	Run once a year at midnight of January 1	0 0 1 1 *
+@monthly	              Run once a month at midnight of the first day of the month	0 0 1 * *
+@weekly	                Run once a week at midnight on Sunday morning	0 0 * * 0
+@daily	                Run once a day at midnight	0 0 * * *
+@hourly	                Run once an hour at the beginning of the hour	0 * * * *
+@reboot	                Run at startup	@reboot
+*/
+
 package lib
 
 import (

@@ -1,3 +1,8 @@
+/*
+VexCron - Drop-in replacement for the Cron daemon.
+Copyright 2015 Mohit Cheppudira <mohit@muthanna.com>
+*/
+
 package lib
 
 import (
@@ -103,7 +108,7 @@ func TestParseConfig(t *testing.T) {
 					},
 					Entry{
 						[]Schedule{
-							{fields: *SingleBitSet(5)},
+							{fields: *NewBitSet(5)},
 							{fields: allHours},
 							{fields: allDoMs},
 							{fields: allMonths},

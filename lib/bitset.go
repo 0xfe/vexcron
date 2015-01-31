@@ -1,36 +1,37 @@
+/*
+VexCron - Drop-in replacement for the Cron daemon.
+Copyright 2015 Mohit Cheppudira <mohit@muthanna.com>
+
+This file implements a simple bit set container, which allows
+for O(1) lookup.
+*/
+
 package lib
 
 import (
 	"fmt"
 )
 
-// Simple implementation of a bit set for storing scheduling
-// entries for O(1) lookup.
-
+// Cron fields never exceed 31, so we'll never need more
+// than 64 entries. Famous last words.
 type BitSet uint64
 
 const (
 	maxBitSetPos = 63
 )
 
-func NewBitSet() *BitSet {
-	return new(BitSet)
-}
-
-func SingleBitSet(pos uint) *BitSet {
-	b := NewBitSet()
-	b.Set(pos, true)
-	return b
-}
-
-func MultiBitSet(poss ...uint) *BitSet {
-	b := NewBitSet()
+// Return an initialzied BitSet with all bits specified
+// by poss set to true.
+func NewBitSet(poss ...uint) *BitSet {
+	b := new(BitSet)
 	for _, pos := range poss {
 		b.Set(pos, true)
 	}
 	return b
 }
 
+// Return a bitset with all bits between start and end set
+// to true.
 func RangeBitSet(start, end uint) *BitSet {
 	b := NewBitSet()
 	for pos := start; pos <= end; pos++ {

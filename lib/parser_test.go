@@ -1,3 +1,8 @@
+/*
+VexCron - Drop-in replacement for the Cron daemon.
+Copyright 2015 Mohit Cheppudira <mohit@muthanna.com>
+*/
+
 package lib
 
 import (
@@ -78,7 +83,7 @@ func TestSchedule(t *testing.T) {
 		{
 			"Just one",
 			"1", 0, 5, scheduleOptions{},
-			false, Schedule{fields: *SingleBitSet(1)},
+			false, Schedule{fields: *NewBitSet(1)},
 		},
 		{
 			"Out of range",
@@ -88,7 +93,7 @@ func TestSchedule(t *testing.T) {
 		{
 			"Multiple",
 			"1,4,3", 0, 5, scheduleOptions{},
-			false, Schedule{fields: *MultiBitSet(1, 4, 3)},
+			false, Schedule{fields: *NewBitSet(1, 4, 3)},
 		},
 		{
 			"Single range",
@@ -98,7 +103,7 @@ func TestSchedule(t *testing.T) {
 		{
 			"Multiple ranges",
 			"3-5,15-16,19", 0, 20, scheduleOptions{},
-			false, Schedule{fields: *MultiBitSet(3, 4, 5, 15, 16, 19)},
+			false, Schedule{fields: *NewBitSet(3, 4, 5, 15, 16, 19)},
 		},
 	}
 
